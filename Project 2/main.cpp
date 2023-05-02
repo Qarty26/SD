@@ -20,6 +20,28 @@ node* newNode(int value) {
     return n;
 }
 
+node* newNode(int value, int priority) {
+
+    node* n=new node;
+    n->value=value;
+    n->priority=priority;
+    n->left=NULL;
+    n->right=NULL;
+
+    return n;
+}
+
+node* newNode(int value, int priority,node* st, node* dr) {
+
+    node* n=new node;
+    n->value=value;
+    n->priority=priority;
+    n->left=st;
+    n->right=dr;
+
+    return n;
+}
+
 void rotateRight(node* &n)
 {
     node* q=n->left;
@@ -56,10 +78,7 @@ void insertTr(node* &root, int val) {
 
 void printT(node* nod)
 {
-    if(nod==NULL)
-    {
-        return;
-    }
+    if(nod==NULL) return;
 
     else
     {
@@ -78,29 +97,78 @@ void printT(node* nod)
 }
 
 
-bool cautare(node* root, int val) {
+bool searchT(node* root, int val) {
     if (root==NULL) return false;
     else if (root->value == val) return true;
-    else if(val < root->value) cautare(root->left,val);
-    else cautare(root->right,val);
+    else if(val < root->value) searchT(root->left,val);
+    else searchT(root->right,val);
 }
+
+
+
+void deleteT(node* &root, int val)
+{
+    if(root==NULL) return;
+
+    if(val < root->value) deleteT(root->left,val);
+    else if (val > root->value) deleteT(root->right,val);
+    else
+    {
+        if(root->left==NULL && root->right==NULL)
+        {
+                delete root;
+                root=NULL;
+        }
+
+        else if(root->left==NULL)
+        {
+            node* aux=root;
+            root=root->right;
+            delete aux;
+        }
+
+        else if(root->right==NULL)
+        {
+            node* aux=root;
+            root=root->left;
+            delete aux;
+        }
+
+        else
+        {
+            if(root->left->priority > root->right->priority)
+            {
+                rotateRight(root);
+                deleteT(root->right,val);
+            }
+
+            else
+            {
+                rotateLeft(root);
+                deleteT(root->left,val);
+            }
+        }
+
+    }
+}
+
+
 
 
 int main() {
 
     node* Treap = NULL;
-    insertTr(Treap, 10);
-    insertTr(Treap, 20);
-    insertTr(Treap, 30);
-    insertTr(Treap, 40);
-    insertTr(Treap, 50);
-    insertTr(Treap, 60);
-    insertTr(Treap, 70);
-    insertTr(Treap, 80);
-    //printT(Treap);
+    for(int i=1;i<=30;i++)
+        insertTr(Treap,i);
 
-    cout<<cautare(Treap, 69);
+    printT(Treap);
 
+    cout<<endl<<endl;
+
+    for(int i=1;i<=30;i=i+2)
+        deleteT(Treap,i); ///sterge valorile impare
+
+    printT(Treap);
 
     return 0;
 }
