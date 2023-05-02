@@ -13,7 +13,7 @@ node* newNode(int value) {
 
     node* n=new node;
     n->value=value;
-    n->priority=(rand()*rand())%value;
+    n->priority=(rand()*rand())%(value+100);
     n->left=NULL;
     n->right=NULL;
 
@@ -31,11 +31,11 @@ node* newNode(int value, int priority) {
     return n;
 }
 
-node* newNode(int value, int priority,node* st, node* dr) {
+node* newNode(int value,node* st, node* dr) {
 
     node* n=new node;
     n->value=value;
-    n->priority=priority;
+    n->priority=(rand()*rand())%(value+100);
     n->left=st;
     n->right=dr;
 
@@ -153,21 +153,31 @@ void deleteT(node* &root, int val)
 }
 
 
+void joinTs(node* &main, node* left, node* right,int val)
+{
+    main = newNode(val,left,right);
+    deleteT(main,val);
+}
 
 
 int main() {
 
+    node* Treap1 = NULL;
+    node* Treap2 = NULL;
     node* Treap = NULL;
-    for(int i=1;i<=30;i++)
-        insertTr(Treap,i);
-
-    printT(Treap);
-
-    cout<<endl<<endl;
-
     for(int i=1;i<=30;i=i+2)
-        deleteT(Treap,i); ///sterge valorile impare
+        insertTr(Treap1,i);
 
+
+    for(int i=2;i<=30;i=i+2)
+        insertTr(Treap2,i);
+
+
+    printT(Treap1);
+    cout<<endl;
+    printT(Treap2);
+    cout<<endl;
+    joinTs(Treap,Treap1, Treap2,0);
     printT(Treap);
 
     return 0;
