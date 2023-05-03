@@ -42,16 +42,14 @@ node* newNode(int value,node* st, node* dr) {
     return n;
 }
 
-void rotateRight(node* &n)
-{
+void rotateRight(node* &n){
     node* q=n->left;
     n->left=q->right;
     q->right=n;
     n=q;
 }
 
-void rotateLeft(node* &n)
-{
+void rotateLeft(node* &n){
     node* q=n->right;
     n->right=q->left;
     q->left=n;
@@ -76,8 +74,7 @@ void insertTr(node* &root, int val) {
     }
 }
 
-void printT(node* nod)
-{
+void printT(node* nod){
     if(nod==NULL) return;
 
     else
@@ -96,7 +93,6 @@ void printT(node* nod)
     }
 }
 
-
 bool searchT(node* root, int val) {
     if (root==NULL) return false;
     else if (root->value == val) return true;
@@ -104,10 +100,7 @@ bool searchT(node* root, int val) {
     else searchT(root->right,val);
 }
 
-
-
-void deleteT(node* &root, int val)
-{
+void deleteT(node* &root, int val){
     if(root==NULL) return;
 
     if(val < root->value) deleteT(root->left,val);
@@ -152,13 +145,30 @@ void deleteT(node* &root, int val)
     }
 }
 
-
-void joinTs(node* &main, node* left, node* right,int val)
-{
+void joinTs(node* &main, node* left, node* right,int val){
     main = newNode(val,left,right);
     deleteT(main,val);
 }
 
+void split(node* root,node* &left,node* &right, int val)
+{
+    if(root==NULL){
+        left=NULL;
+        right=NULL;
+    }
+    else{
+        if(root->value<=val)
+        {
+            split(root->right,root->right,right,val);
+            left=root;
+        }
+        else
+        {
+            split(root->left,left,root->left,val);
+            right=root;
+        }
+    }
+}
 
 int main() {
 
@@ -173,12 +183,16 @@ int main() {
         insertTr(Treap2,i);
 
 
+
+    joinTs(Treap,Treap1, Treap2,0);
+    printT(Treap);
+    cout<<endl<<endl;
+    split(Treap,Treap1,Treap2,15);
     printT(Treap1);
     cout<<endl;
     printT(Treap2);
-    cout<<endl;
-    joinTs(Treap,Treap1, Treap2,0);
-    printT(Treap);
+
+
 
     return 0;
 }
