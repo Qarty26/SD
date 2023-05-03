@@ -1,5 +1,9 @@
 #include<iostream>
+#include<fstream>
+#include<climits>
 using namespace std;
+ifstream in("abce.in");
+ofstream out("abce.out");
 
 
 struct node {
@@ -13,7 +17,7 @@ node* newNode(int value) {
 
     node* n=new node;
     n->value=value;
-    n->priority=(rand()*rand())%(value+100);
+    n->priority=rand();
     n->left=NULL;
     n->right=NULL;
 
@@ -35,7 +39,7 @@ node* newNode(int value,node* st, node* dr) {
 
     node* n=new node;
     n->value=value;
-    n->priority=(rand()*rand())%(value+100);
+    n->priority=rand();
     n->left=st;
     n->right=dr;
 
@@ -96,8 +100,42 @@ void printT(node* nod){
 bool searchT(node* root, int val) {
     if (root==NULL) return false;
     else if (root->value == val) return true;
-    else if(val < root->value) searchT(root->left,val);
-    else searchT(root->right,val);
+    else if(val < root->value) return searchT(root->left,val);
+    else return searchT(root->right,val);
+}
+
+
+int searchBefore(node* root, int value) {
+    int result = INT_MIN;
+    while (root) {
+        if (root->value <= value) {
+            result = root->value;
+            root = root->right;
+        } else {
+            root = root->left;
+        }
+    }
+    return result;
+}
+
+int searchAfter(node* root, int value) {
+    int result = INT_MAX;
+    while (root) {
+        if (root->value >= value) {
+            result = root->value;
+            root = root->left;
+        } else {
+            root = root->right;
+        }
+    }
+    return result;
+}
+
+void interval(node* root, int x, int y) {
+    if (!root) return;
+    if (root->value > x) interval(root->left, x, y);
+    if (root->value >= x && root->value <= y) out << root->value << " ";
+    if (root->value < y) interval(root->right, x, y);
 }
 
 void deleteT(node* &root, int val){
@@ -172,27 +210,50 @@ void split(node* root,node* &left,node* &right, int val)
 
 int main() {
 
-    node* Treap1 = NULL;
-    node* Treap2 = NULL;
-    node* Treap = NULL;
-    for(int i=1;i<=30;i=i+2)
-        insertTr(Treap1,i);
+int q,i,x,y,choice;
+
+node* Treap=NULL;
 
 
-    for(int i=2;i<=30;i=i+2)
-        insertTr(Treap2,i);
+in>>q;
 
+for(i=1;i<=q;i++)
+{
+    in>>choice;
+    if(choice==1)
+    {
+        in>>x;
+        insertTr(Treap,x);
+    }
+    else if(choice==2)
+    {
+        in>>x;
+        deleteT(Treap,x);
+    }
+    else if(choice==3)
+    {
+        in>>x;
+        out<<searchT(Treap,x)<<endl;
+    }
+    else if(choice==4)
+    {
+        in>>x;
+        out<<searchBefore(Treap,x)<<endl;
+    }
+    else if(choice==5)
+    {
+        in>>x;
+        out<<searchAfter(Treap,x)<<endl;
 
+    }
+    else if(choice==6)
+    {
+        in>>x>>y;
+        interval(Treap,x,y);
+        out<<endl;
+    }
 
-    joinTs(Treap,Treap1, Treap2,0);
-    printT(Treap);
-    cout<<endl<<endl;
-    split(Treap,Treap1,Treap2,15);
-    printT(Treap1);
-    cout<<endl;
-    printT(Treap2);
-
-
+}
 
     return 0;
 }
